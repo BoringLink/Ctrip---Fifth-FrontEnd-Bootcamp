@@ -198,56 +198,15 @@
 
 ### 前端开发（待初始化）
 
-1. **初始化项目**
-
-   ```bash
-   npx create-vite@latest frontend --template react-ts
-   ```
-
-2. **安装核心依赖**
-
-   ```bash
-   cd frontend
-   npm install react-router-dom @tanstack/react-query tailwindcss postcss autoprefixer
-   ```
-
-3. **配置Tailwind CSS**
-
-   ```bash
-   npx tailwindcss init -p
-   ```
-
-4. **启动开发服务器**
-   ```bash
-   npm run dev
-   ```
-
 ## API文档
 
 本项目使用Nest.js官方的Swagger UI生成API文档，提供交互式的API接口浏览和测试功能。
 
 ### 访问API文档
 
-1. 确保后端服务已启动（运行 `npm run start:dev`）
-2. 在浏览器中访问：http://localhost:3000/api
+1. 确保后端服务已启动（运行 `npm run start`）
+2. 在浏览器中访问：http://localhost:<后端port>/api
 3. 即可查看完整的API文档，包括所有接口的详细说明、请求参数和响应格式
-
-### API文档内容
-
-Swagger UI文档包含以下模块的API接口：
-
-- **认证接口**：用户注册、登录和获取个人信息
-- **酒店接口**：酒店创建、查询、更新和删除
-- **预订接口**：预订创建和管理
-- **入住人员接口**：入住人员信息管理
-- **标签接口**：酒店标签管理
-
-### 使用说明
-
-- 在Swagger UI中，点击接口名称可以展开查看详细信息
-- 点击"Try it out"按钮可以测试接口
-- 填写必要的参数后，点击"Execute"按钮发送请求
-- 可以查看响应结果和状态码
 
 ### 注意事项
 
@@ -351,46 +310,15 @@ Swagger UI文档包含以下模块的API接口：
 
    ```bash
    cd backend
-   npm run build
+   pnpm build
    ```
 
 2. **启动生产服务器**
    ```bash
-   npm run start:prod
+   pnpm start:prod
    ```
 
 ### 前端部署
-
-1. **构建项目**
-
-   ```bash
-   cd frontend
-   npm run build
-   ```
-
-2. **部署静态资源**
-   将 `dist` 目录部署到静态文件服务器（如Nginx、Vercel等）
-
-3. **配置Nginx（可选）**
-   ```nginx
-   server {
-     listen 80;
-     server_name example.com;
-
-     location / {
-       root /path/to/frontend/dist;
-       index index.html;
-       try_files $uri $uri/ /index.html;
-     }
-
-     location /api {
-       proxy_pass http://localhost:3000;
-       proxy_set_header Host $host;
-       proxy_set_header X-Real-IP $remote_addr;
-       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-     }
-   }
-   ```
 
 ## 项目创新性
 
@@ -413,11 +341,6 @@ Swagger UI文档包含以下模块的API接口：
 
 ### 前端性能优化
 
-1. **代码分割**：使用React.lazy和Suspense进行代码分割，减少初始加载时间
-2. **图片优化**：使用适当的图片格式和大小，实现图片懒加载
-3. **状态管理**：合理使用React Query缓存，减少重复API调用
-4. **渲染优化**：使用React.memo、useMemo和useCallback优化组件渲染
-
 ## 开发计划
 
 ### 第一阶段：后端开发
@@ -431,25 +354,6 @@ Swagger UI文档包含以下模块的API接口：
 
 ### 第二阶段：前端开发
 
-1. 初始化前端项目
-2. 实现管理端页面
-3. 实现用户端移动端页面
-4. 集成API接口
-5. 测试和优化
-
 ### 第三阶段：测试和部署
 
-1. 功能测试
-2. 性能测试
-3. 安全测试
-4. 部署到生产环境
-
-## 联系信息
-
-如有问题或建议，请联系项目维护者。
-
 ---
-
-_本项目基于大作业要求开发，旨在提供一个完整的酒店预订平台解决方案。_
-
-_团队内开发文档，仅供内部使用和评委评审。_

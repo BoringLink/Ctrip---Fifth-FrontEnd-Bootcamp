@@ -15,10 +15,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('携程第五期前端训练营')
-    .setDescription('API文档')
+    .setTitle('易宿酒店预订平台后端API')
+    .setDescription('易宿酒店预订平台后端系统API文档，包含认证、酒店管理、标签管理、预订管理和入住人员管理等功能模块')
     .setVersion('1.0')
-    .addTag('易宿酒店管理系统')
+    .addBearerAuth()
+    .addTag('认证', '用户注册、登录和获取个人信息')
+    .addTag('酒店', '酒店的创建、查询、更新和删除')
+    .addTag('标签', '标签的管理和酒店标签关联')
+    .addTag('预订', '预订管理相关操作')
+    .addTag('入住人员', '入住人员信息管理')
     .build();
   const documentFactory = () =>
     SwaggerModule.createDocument(app, config, options);

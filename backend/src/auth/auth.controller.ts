@@ -21,7 +21,7 @@ import { AuthGuard } from './guards/auth.guard';
 @ApiTags('认证')
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @ApiOperation({
     summary: '用户注册',

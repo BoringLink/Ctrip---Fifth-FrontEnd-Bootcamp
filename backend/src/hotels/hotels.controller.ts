@@ -1,15 +1,18 @@
-import { Controller, Post, Get, Put, Delete, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
+import { UseInterceptors, UploadedFile, Controller, Post, Get, Put, Delete, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
 import { QueryHotelsDto } from './dto/query-hotels.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @ApiTags('酒店')
 @Controller('api/hotels')
 export class HotelsController {
-  constructor(private hotelsService: HotelsService) {}
+  constructor(private hotelsService: HotelsService) { }
 
   @ApiOperation({
     summary: '创建酒店',
@@ -206,4 +209,109 @@ export class HotelsController {
   async queryHotels(@Query() query: QueryHotelsDto) {
     return this.hotelsService.getHotels(query);
   }
+
+  // 追加
+  @ApiOperation({ summary: '上传酒店图片' })
+  @ApiBearerAuth()
+  @Post(':id/images')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads/hotels',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+      }
+    }),
+    fileFilter: (req, file, cb) => {
+      if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        return cb(new Error('Only image files are allowed!'), false);
+      }
+      cb(null, true);
+    }
+  }))
+  async uploadHotelImage(
+    @Param('id') hotelId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('description') description?: string,
+    @Body('isMain') isMain?: string,
+  ) {
+    const imageUrl = `/uploads/hotels/${file.filename}`;
+    return this.hotelsService.addHotelImage(hotelId, {
+      url: imageUrl,
+      description,
+      isMain: isMain === 'true',
+    });
+  }
+
+  @ApiOperation({ summary: '更新图片信息' })
+  @ApiBearerAuth()
+  @Put(':hotelId/images/:imageId')
+  @UseGuards(AuthGuard)
+  async updateHotelImage(
+    @Param('hotelId') hotelId: string,
+    @Param('imageId') imageId: string,
+    @Body() body: { description?: string; isMain?: boolean },
+    @Request() req,
+  ) {
+    return this.hotelsService.updateHotelImage(hotelId, imageId, body, req.user.id);
+  }
+
+  @Delete(':hotelId/images/:imageId')
+  @UseGuards(AuthGuard)
+  async deleteHotelImage(
+    @Param('hotelId') hotelId: string,
+    @Param('imageId') imageId: string,
+    @Request() req,
+  ) {
+    return this.hotelsService.deleteHotelImage(hotelId, imageId, req.user.id);
+  }
+}
+
+@ApiTags('酒店管理（管理员）')
+@Controller('api/admin/hotels')
+@UseGuards(AuthGuard)
+export class AdminHotelsController {
+  constructor(private hotelsService: HotelsService) { }
+
+  @ApiOperation({ summary: '获取待审核酒店列表' })
+  @ApiResponse({ status: 200, description: '成功' })
+  @Get('pending')
+  async getPendingHotels(@Request() req) {
+    return this.hotelsService.getHotelsForVerification();
+  }
+
+  @ApiOperation({ summary: '审核通过酒店' })
+  @Post(':id/approve')
+  async approveHotel(@Param('id') hotelId: string, @Request() req) {
+    return this.hotelsService.approveHotel(hotelId);
+  }
+
+  @ApiOperation({ summary: '拒绝酒店' })
+  @Post(':id/reject')
+  async rejectHotel(
+    @Param('id') hotelId: string,
+    @Body('reason') reason: string,
+    @Request() req
+  ) {
+    return this.hotelsService.rejectHotel(hotelId, reason);
+  }
+
+  @ApiOperation({ summary: '下线酒店' })
+  @Post(':id/offline')
+  async offlineHotel(@Param('id') hotelId: string, @Request() req) {
+    return this.hotelsService.offlineHotel(hotelId);
+  }
+
+  @ApiOperation({ summary: '上线酒店' })
+  @Post(':id/online')
+  async onlineHotel(@Param('id') hotelId: string, @Request() req) {
+    return this.hotelsService.onlineHotel(hotelId);
+  }
+
+  @Get()
+  async getAllHotels(@Request() req, @Query() query?: any) {
+    return this.hotelsService.getAllHotelsForAdmin(query);
+  }
+
 }

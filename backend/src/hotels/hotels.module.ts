@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { HotelsController } from './hotels.controller';
+import { HotelsController, AdminHotelsController } from './hotels.controller';
 import { HotelsService } from './hotels.service';
 
 @Module({
-  controllers: [HotelsController],
+  controllers: [HotelsController, AdminHotelsController],
   providers: [HotelsService],
   exports: [HotelsService],
 })
-export class HotelsModule {}
+export class HotelsModule { }

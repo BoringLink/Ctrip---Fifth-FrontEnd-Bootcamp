@@ -1,5 +1,12 @@
 import { IsString, IsNotEmpty, IsNumber, IsDate, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { PromotionDto } from './promotion.dto';
+import { CreateRoomDto } from './create-room.dto';
+import { CreateNearbyAttractionDto } from './create-nearby-attraction.dto';
+import { CreateFacilityDto } from './create-facility.dto';
+import { IsArray } from 'class-validator';
 
 export class UpdateHotelDto {
   @ApiProperty({
@@ -46,9 +53,9 @@ export class UpdateHotelDto {
     required: true,
     type: Date,
   })
-  @IsDate()
+  @IsString()
   @IsNotEmpty()
-  openingDate: Date;
+  openingDate: string;
 
   @ApiProperty({
     description: '酒店描述',
@@ -58,4 +65,34 @@ export class UpdateHotelDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiProperty({ type: [CreateRoomDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRoomDto)
+  rooms?: CreateRoomDto[];
+
+  @ApiProperty({ type: [PromotionDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => PromotionDto)
+  promotions?: PromotionDto[];
+
+  @ApiProperty({ type: [CreateNearbyAttractionDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateNearbyAttractionDto)
+  nearbyAttractions?: CreateNearbyAttractionDto[];
+
+  @ApiProperty({ type: [CreateFacilityDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateFacilityDto)
+  facilities?: CreateFacilityDto[];
+
+  @ApiProperty({ description: '标签ID数组', example: ['uuid1', 'uuid2'], required: false })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tagIds?: string[];
 }

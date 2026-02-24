@@ -16,8 +16,18 @@
 - **Prisma**：选择理由 - TypeScript ORM，提供类型安全的数据库操作，简化数据库交互
 - **JWT**：选择理由 - 无状态认证，便于水平扩展，适合前后端分离架构
 - **bcrypt**：选择理由 - 安全的密码哈希算法，保护用户密码安全
+- **Multer**：用于处理酒店图片上传
 
-### 前端技术栈（待初始化）
+### 前端技术栈
+
+#### PC管理端
+
+- **Next.js (React框架)**：选择理由 - 服务端渲染、文件路由、API路由，提升开发效率和SEO
+- **TypeScript**：选择理由 - 静态类型检查，提高代码质量和可维护性
+- **Ant Design**：选择理由 - 企业级UI组件库，提供丰富的高质量组件，快速搭建后台系统
+- **Axios**：选择理由 - 基于Promise的HTTP客户端，支持拦截器，简化API调用
+- **Day.js**：选择理由 - 轻量级日期处理库，用于日期格式化与转换
+- **@ant-design/nextjs-registry**：用于Ant Design与Next.js的集成
 
 ## 项目结构
 
@@ -41,9 +51,41 @@
 │   │   ├── guests/           # 入住人员模块
 │   │   ├── tags/             # 酒店标签模块
 │   │   └── app.module.ts     # 应用主模块
+│   ├── uploads/              # 酒店图片存储目录
 │   ├── package.json          # 后端依赖
 │   └── tsconfig.json         # TypeScript配置
-├── frontend/                 # 前端项目（待初始化）
+├── yisu-hotel-pc/            # PC端
+│   ├── public/               # 静态资源
+│   ├── src/
+│   │   ├──components/        # 公共组件
+│   │   │   ├──HotelDetailModal.tsx    # 酒店详情弹窗
+│   │   │   ├──HotelForm.tsx           # 酒店表单
+│   │   │   ├──Layout.tsx              # 主布局
+│   │   │   ├──RequireAuth.tsx         # 路由权限控制
+│   │   ├──lib/               # 工具函数和API封装
+│   │   │   ├──api.ts                  # API请求封装
+│   │   │   ├──auto.ts                 # 认证相关
+│   │   ├──pages/             # 页面文件
+│   │   │   ├──admin/                  # 管理员端页面
+│   │   │   │   ├── audits/            # 待审核酒店列表
+│   │   │   │   │   └── index.tsx
+│   │   │   │   └── hotels/            # 所有酒店管理（上线/下线）
+│   │   │   │       └── index.tsx
+│   │   │   ├──merchant/               # 商户端页面
+│   │   │   │   └── hotels/                  # 酒店管理
+│   │   │   │       ├── [id]/                # 动态路由
+│   │   │   │       │   └── edit.tsx            # 编辑酒店
+│   │   │   │       ├── index.tsx            # 我的酒店列表
+│   │   │   │       └── new.tsx              # 新建酒店
+│   │   │   ├── _app.tsx               # 全局配置
+│   │   │   ├── _document.tsx          # 自定义文档
+│   │   │   ├── index.tsx              # 根页面（重定向到登录或对应首页）
+│   │   │   ├──login.tsx               # 登录页
+│   │   │   ├──register.tsx            # 注册页
+│   │   ├──styles/            # 全局样式
+│   │   ├──types/             # TypeScript类型定义
+│   ├── package-lock.json
+│   ├── package.json
 ├── documents/                # 项目文档
 └── README.md                 # 项目说明
 ```
@@ -79,14 +121,29 @@
 - `POST /api/auth/login`：用户登录 - 返回JWT令牌
 - `GET /api/auth/profile`：获取用户信息 - 需要认证
 
-#### 酒店接口
+#### 酒店接口（商户端）
 
 - `POST /api/hotels`：创建酒店（商户） - 需要认证
 - `GET /api/hotels/merchant`：获取商户的酒店列表 - 需要认证
 - `GET /api/hotels/:id`：获取酒店详情 - 需要认证
-- `PUT /api/hotels/:id`：更新酒店信息 - 需要认证
+- `PUT /api/hotels/:id`：更新酒店信息 - 需要认证，更新后状态重置为pending
 - `DELETE /api/hotels/:id`：删除酒店 - 需要认证
+- `POST /api/hotels/:id/images`：上传酒店图片 - 需要认证
+- `PUT /api/hotels/:hotelId/images/:imageId`：更新图片信息 - 需要认证
+- `DELETE /api/hotels/:hotelId/images/:imageId`：删除图片 - 需要认证
+
+#### 酒店接口（公开查询）
+
 - `GET /api/hotels`：查询酒店列表（支持筛选） - 公开接口
+
+#### 酒店接口（管理员端）
+
+- `GET /api/admin/hotels/pending`：获取待审核酒店列表 - 需要认证
+- `POST /api/admin/hotels/:id/approve`：审核通过酒店 - 需要认证
+- `POST /api/admin/hotels/:id/reject`：拒绝酒店 - 需要认证
+- `POST /api/admin/hotels/:id/offline`：下线酒店 - 需要认证
+- `POST /api/admin/hotels/:id/online`：上线酒店 - 需要认证
+- `GET /api/admin/hotels/`：获取所有酒店列表 - 需要认证
 
 #### 预订接口
 
@@ -111,7 +168,38 @@
 
 #### 管理端（PC端）
 
+##### 页面结构设计
+
+PC管理端面向两类用户：商户和管理员，通过路由权限控制区分访问权限。
+
+###### 商户端
+
+- `/merchant/hotels`：我的酒店列表，展示当前商户的所有酒店，支持查看、编辑、删除操作
+- `/merchant/hotels/new`：新增酒店表单，包含酒店基本信息、房型、促销、设施、附近景点、标签和图片上传
+- `/merchant/hotels/[id]/edit`：编辑酒店信息，支持更新已有数据和图片管理
+
+###### 管理员端
+
+- `/admin/audits`：待审核酒店列表，展示所有状态为pending的酒店，可查看详情、通过或拒绝（需填写原因）
+- `/admin/hotels`：所有酒店管理列表，展示所有酒店，支持查看详情、上线/下线操作
+
+###### 公共页面
+
+- `/login`：用户登录页
+- `/register`：用户注册页，可选择商户或管理员角色
+
 ### 组件设计
+
+- **Layout**：主布局组件，包含侧边栏菜单（根据角色动态生成）和用户头像下拉菜单（退出登录）
+- **RequireAuth**：高阶组件/路由守卫，检查用户是否登录及角色权限，未授权则跳转
+- **HotelForm**：酒店表单组件，复用新建和编辑场景，支持嵌套表单（房型、促销等列表）、图片预览与上传
+- **HotelDetailModal**：酒店详情弹窗，用于查看完整酒店信息（包括关联数据）
+
+### 状态管理与数据流
+
+- 使用React Hooks管理组件本地状态
+- 通过lib/api.ts封装Axios请求，统一添加认证Token，并提供类型化的API方法
+- 用户认证信息存储在localStorage中，通过lib/auth.ts提供读写和注销方法
 
 ## 开发指南
 
@@ -154,7 +242,39 @@
    npm run test
    ```
 
-### 前端开发（待初始化）
+### 前端开发
+
+#### PC管理端
+
+1. **环境准备**
+   - Node.js 16+
+
+2. **安装依赖**
+
+   ```bash
+   cd yisu-hotel-pc
+   npm install
+   ```
+
+3. **配置环境变量**
+   创建 `.env` 文件：
+
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3000
+   ```
+
+4. **启动开发服务器**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **构建生产版本**
+
+   ```bash
+   npm run build
+   npm start
+   ```
 
 ## API文档
 
@@ -287,6 +407,7 @@
 5. **模块化架构**：前后端分离，模块化设计，便于维护和扩展
 6. **完整的审核流程**：商户上传酒店信息后，管理员审核通过才能上线，确保酒店信息质量
 7. **灵活的优惠系统**：支持多种优惠类型（折扣、固定金额、套餐），满足不同促销需求
+8. **酒店图片管理**： 支持多图上传、主图设置、图片描述，丰富酒店展示
 
 ## 性能优化策略
 
@@ -311,6 +432,15 @@
 6. 编写API文档
 
 ### 第二阶段：前端开发
+
+#### PC端
+
+1. 搭建Next.js项目，集成Ant Design
+2. 实现登录/注册页面及认证逻辑
+3. 实现商户端：我的酒店列表、新增酒店、编辑酒店
+4. 实现管理员端：待审核列表、所有酒店管理
+5. 实现酒店详情弹窗组件
+6. 对接后端API，联调测试
 
 ### 第三阶段：测试和部署
 

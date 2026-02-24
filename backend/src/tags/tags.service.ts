@@ -5,7 +5,7 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 
 @Injectable()
 export class TagsService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaClient) {}
 
   async createTag(createTagDto: CreateTagDto): Promise<HotelTag> {
     // 创建标签

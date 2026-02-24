@@ -6,9 +6,10 @@ import { HotelsModule } from './hotels/hotels.module';
 import { ReservationsModule } from './reservations/reservations.module';
 import { GuestsModule } from './guests/guests.module';
 import { TagsModule } from './tags/tags.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [AuthModule, HotelsModule, ReservationsModule, GuestsModule, TagsModule],
+  imports: [PrismaModule, AuthModule, HotelsModule, ReservationsModule, GuestsModule, TagsModule],
   controllers: [AppController],
   providers: [AppService],
 })

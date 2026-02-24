@@ -7,7 +7,7 @@ import { CreateFacilityDto } from './dto/create-facility.dto';
 import { CreateNearbyAttractionDto } from './dto/create-nearby-attraction.dto';
 @Injectable()
 export class HotelsService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaClient) {}
 
   async createHotel(createHotelDto: CreateHotelDto, merchantId: string) {
     // 创建酒店，状态默认为pending

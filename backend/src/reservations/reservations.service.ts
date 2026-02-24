@@ -4,7 +4,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaClient) {}
 
   async createReservation(createReservationDto: CreateReservationDto): Promise<Reservation> {
     // 检查酒店是否存在

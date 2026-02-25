@@ -183,21 +183,23 @@ export default function MapScreen() {
       Alert.alert('提示', '需要位置权限才能定位，请在设置中允许')
       return
     }
-    try {
-      const last = await Location.getLastKnownPositionAsync()
-      if (last) { goTo(last.coords.latitude, last.coords.longitude, 15); return }
-    } catch {}
-    const gps = Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest }).catch(() => null)
-    const ip = fetch('https://ipapi.co/json/').then(r => r.json()).catch(() => null)
-    const result = await Promise.race([gps, ip, new Promise<null>(r => setTimeout(() => r(null), 10000))])
-    if (result && 'coords' in result) {
-      goTo(result.coords.latitude, result.coords.longitude, 15)
-    } else if (result && 'latitude' in result) {
-      goTo(result.latitude, result.longitude, 14)
-    } else {
-      const d = districts[districtIdx]
-      goTo(d.lat, d.lng, d.zoom)
+    // 先尝试 IP 定位（模拟器更可靠），同时并行跑 GPS
+    const gpsPromise = Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Lowest }).catch(() => null)
+    const ipPromise = fetch('https://ipapi.co/json/').then(r => r.json()).catch(() => null)
+    const ip = await Promise.race([ipPromise, new Promise<null>(r => setTimeout(() => r(null), 3000))])
+    if (ip && ip.latitude) {
+      goTo(ip.latitude, ip.longitude, 14)
+      return
     }
+    // IP 失败再等 GPS
+    const gps = await Promise.race([gpsPromise, new Promise<null>(r => setTimeout(() => r(null), 5000))])
+    if (gps && 'coords' in gps) {
+      goTo(gps.coords.latitude, gps.coords.longitude, 15)
+      return
+    }
+    Alert.alert('定位失败', '无法获取位置，已显示当前选中区域')
+    const d = districts[districtIdx]
+    goTo(d.lat, d.lng, d.zoom)
   }
 
   return (

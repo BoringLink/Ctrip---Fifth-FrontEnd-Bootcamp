@@ -34,6 +34,6 @@ async function bootstrap() {
   // 添加全局验证管道
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();

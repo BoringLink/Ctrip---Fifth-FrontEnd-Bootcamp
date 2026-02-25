@@ -7,9 +7,13 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaClient) {}
 
   async register(registerDto: RegisterDto) {
+    if (!registerDto || !registerDto.email) {
+      throw new UnauthorizedException('Invalid request body');
+    }
+
     // 检查邮箱是否已存在
     const existingUser = await this.prisma.user.findUnique({
       where: { email: registerDto.email },
@@ -47,6 +51,10 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
+    if (!loginDto || !loginDto.email) {
+      throw new UnauthorizedException('Invalid request body');
+    }
+
     // 查找用户
     const user = await this.prisma.user.findUnique({
       where: { email: loginDto.email },

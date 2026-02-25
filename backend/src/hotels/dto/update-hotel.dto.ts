@@ -95,4 +95,15 @@ export class UpdateHotelDto {
   @IsArray()
   @IsString({ each: true })
   tagIds?: string[];
+
+  @ApiProperty({ 
+    description: '酒店地理位置', 
+    example: { longitude: 116.404, latitude: 39.915 }, 
+    required: false 
+  })
+  @IsOptional()
+  location?: {
+    longitude: number;
+    latitude: number;
+  };
 }

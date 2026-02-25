@@ -5,7 +5,7 @@ import { UpdateGuestDto } from './dto/update-guest.dto';
 
 @Injectable()
 export class GuestsService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaClient) {}
 
   async createGuest(createGuestDto: CreateGuestDto, reservationId: string): Promise<Guest> {
     // 检查预订是否存在

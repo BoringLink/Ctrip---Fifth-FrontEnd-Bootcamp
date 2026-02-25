@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, FlatList } from 'react-native'
 import { WebView } from 'react-native-webview'
+import type WebViewType from 'react-native-webview'
 import * as Location from 'expo-location'
 
 const API = 'http://192.168.1.28:3000'
@@ -132,15 +133,24 @@ export default function MapScreen() {
   const [province, setProvince] = useState('北京')
   const [city, setCity] = useState('北京市')
   const [districtIdx, setDistrictIdx] = useState(0)
-  const [html, setHtml] = useState(buildHtml(REGIONS['北京']['北京市'][0].lat, REGIONS['北京']['北京市'][0].lng, REGIONS['北京']['北京市'][0].zoom))
   const [picker, setPicker] = useState<PickerLevel | null>(null)
+  const webRef = useRef<WebViewType>(null)
+  const initialHtml = useMemo(() => buildHtml(
+    REGIONS['北京']['北京市'][0].lat,
+    REGIONS['北京']['北京市'][0].lng,
+    REGIONS['北京']['北京市'][0].zoom
+  ), [])
 
   const cities = Object.keys(REGIONS[province] ?? {})
   const districts = REGIONS[province]?.[city] ?? []
 
   const goTo = async (lat: number, lng: number, zoom: number) => {
+    // 先让地图飞到目标位置
+    webRef.current?.injectJavaScript(`map.setView([${lat},${lng}],${zoom});true;`)
+    // 再拉 POI 更新标记
     const pois = await fetchPois(lat, lng)
-    setHtml(buildHtml(lat, lng, zoom, pois))
+    const js = `renderPois(${JSON.stringify(pois)});true;`
+    webRef.current?.injectJavaScript(js)
   }
 
   const selectProvince = (p: string) => {
@@ -190,12 +200,6 @@ export default function MapScreen() {
     }
   }
 
-  // 初始加载数据
-  React.useEffect(() => {
-    const d = REGIONS['北京']['北京市'][0]
-    goTo(d.lat, d.lng, d.zoom)
-  }, [])
-
   return (
     <View style={styles.container}>
       {/* 级联选择栏 */}
@@ -231,11 +235,23 @@ export default function MapScreen() {
         </ScrollView>
       </View>
 
-      <WebView key={html} style={styles.map} originWhitelist={['*']} source={{ html }} javaScriptEnabled
+      <WebView
+        ref={webRef}
+        style={styles.map}
+        originWhitelist={['*']}
+        source={{ html: initialHtml, baseUrl: 'https://cdn.bootcdn.net' }}
+        javaScriptEnabled
+        mixedContentMode="always"
+        onLoad={() => {
+          const d = REGIONS['北京']['北京市'][0]
+          goTo(d.lat, d.lng, d.zoom)
+        }}
         onMessage={(e) => {
           try {
             const { lat, lng } = JSON.parse(e.nativeEvent.data)
-            fetchPois(lat, lng).then(pois => setHtml(buildHtml(lat, lng, 13, pois)))
+            fetchPois(lat, lng).then(pois => {
+              webRef.current?.injectJavaScript(`renderPois(${JSON.stringify(pois)});true;`)
+            })
           } catch {}
         }}
       />

@@ -2,10 +2,12 @@
 
 ## 项目概述
 
-易宿酒店预订平台是一个面向现代旅游出行场景的综合服务体系，旨在为酒店商家与终端消费者之间搭建高效、便捷的信息交互桥梁。本项目分为两个核心模块：
+易宿酒店预订平台是一个面向现代旅游出行场景的综合服务体系，旨在为酒店商家与终端消费者之间搭建高效、便捷的信息交互桥梁。本项目分为四个核心模块：
 
-- **管理酒店信息系统（PC 端）**：供酒店商家录入管理酒店信息，管理员审核发布酒店信息
-- **酒店预订流程（移动端 H5）**：供用户查询、浏览和预订酒店
+- **管理酒店信息系统（PC 端 admin-web）**：React + Vite + Ant Design，供酒店商家录入管理酒店信息，管理员审核发布
+- **管理酒店信息系统（PC 端 yisu-hotel-pc）**：Next.js + Ant Design，同上功能的另一实现版本
+- **酒店预订流程（移动端 H5 mobile-web）**：React + Vite + antd-mobile，供用户查询、浏览和预订酒店
+- **酒店预订流程（移动端 App mobile-app）**：React Native + Expo，原生移动端 App，含地图找房、日历选房、酒店预订全流程
 
 ---
 
@@ -44,13 +46,61 @@
 | React Router 6 | 客户端路由管理 |
 | Axios | HTTP 请求 |
 
----
+### 前端（移动端 App mobile-app）
 
-## 项目结构
+| 技术 | 选择理由 |
+|------|----------|
+| React Native + Expo | 跨平台原生移动端开发 |
+| React Navigation | Stack + BottomTab 混合导航 |
+| react-native-webview + Leaflet.js | 地图展示（高德瓦片 + MarkerCluster） |
+| expo-location | GPS 定位 |
+| Axios | HTTP 请求 |
+
+### 前端（PC 管理端 yisu-hotel-pc）
+
+| 技术 | 选择理由 |
+|------|----------|
+| Next.js 16 + TypeScript | SSR 框架，Pages Router |
+| Ant Design 5 | 企业级 PC UI 组件库 |
+| Axios | HTTP 请求，自动注入 JWT |
+
+
 
 ```
 Ctrip---Fifth-FrontEnd-Bootcamp-main/
-├── admin-web/                          # PC 管理端（商户 + 管理员）
+├── admin-web/                          # PC 管理端（商户 + 管理员）React + Vite
+├── yisu-hotel-pc/                      # PC 管理端（商户 + 管理员）Next.js 版本
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── login.tsx               # 登录页
+│   │   │   ├── register.tsx            # 注册页
+│   │   │   ├── merchant/hotels/        # 商户酒店管理（列表/新增/编辑）
+│   │   │   └── admin/audits/           # 管理员审核列表
+│   │   ├── components/
+│   │   │   ├── Layout.tsx              # 侧边栏布局
+│   │   │   ├── HotelForm.tsx           # 酒店表单
+│   │   │   ├── HotelDetailModal.tsx    # 酒店详情弹窗
+│   │   │   └── RequireAuth.tsx         # 路由守卫
+│   │   └── lib/
+│   │       ├── api.ts                  # Axios 封装 + 所有接口
+│   │       └── auth.ts                 # JWT token 存取
+│   └── .env.local                      # NEXT_PUBLIC_API_URL=http://192.168.1.28:3000
+├── mobile-app/                         # React Native + Expo 移动端 App
+│   ├── src/
+│   │   ├── screens/
+│   │   │   ├── HomeScreen.tsx          # 首页（搜索 + 日历 + 推荐酒店）
+│   │   │   ├── MapScreen.tsx           # 地图找房（Leaflet + 高德 POI + 省市区选择）
+│   │   │   ├── SearchScreen.tsx        # 搜索结果（关键词 + 星级筛选 + 排序）
+│   │   │   ├── HotelDetailScreen.tsx   # 酒店详情
+│   │   │   ├── BookingScreen.tsx       # 预订填写
+│   │   │   └── ConfirmScreen.tsx       # 预订确认
+│   │   ├── api/
+│   │   │   ├── http.ts                 # Axios 实例（baseURL: http://192.168.1.28:3000）
+│   │   │   └── hotels.ts               # 酒店搜索/详情接口
+│   │   ├── types/index.ts              # TypeScript 类型定义
+│   │   └── Navigation.tsx              # Stack + BottomTab 导航配置
+│   └── app.json                        # usesCleartextTraffic: true（允许 HTTP）
+├── mobile-web/                         # 移动端 H5（用户预订）React + Vite
 │   ├── src/
 │   │   ├── api/                        # Axios 请求封装
 │   │   │   ├── http.ts                 # Axios 实例，baseURL=/api，自动注入 JWT，401 跳登录
@@ -173,7 +223,7 @@ npm install
 npm run dev         # http://localhost:5173
 ```
 
-### 4. 启动移动端
+### 4. 启动移动端 H5
 
 ```bash
 cd mobile-web
@@ -181,6 +231,31 @@ npm install
 npm run dev         # http://localhost:5174
                     # 手机预览：http://<本机IP>:5174（同 WiFi）
 ```
+
+### 5. 启动 PC 管理端（Next.js 版）
+
+```bash
+cd yisu-hotel-pc
+npm install
+npm run dev -- -p 3001   # http://localhost:3001
+```
+
+> 需先在 `yisu-hotel-pc/.env.local` 设置：
+> ```
+> NEXT_PUBLIC_API_URL=http://<本机IP>:3000
+> ```
+
+### 6. 启动移动端 App（React Native）
+
+```bash
+cd mobile-app
+npm install
+npx expo start --clear
+```
+
+用 Expo Go 扫码，或连接 Android 模拟器。
+
+> 真机调试需将 `mobile-app/src/api/http.ts` 和 `mobile-app/src/screens/MapScreen.tsx` 中的 `192.168.1.28` 改为你电脑的局域网 IP（手机和电脑需在同一 WiFi）。
 
 ### 环境变量
 
@@ -426,6 +501,10 @@ proxy: {
 | 创建预订 400 报错 | DTO 缺少 `@Type(() => Date)`，`@IsDecimal()` 不接受数字 | 加 `@Type(() => Date)`，改为 `@IsNumber()` |
 | 图片上传 404 | `POST /api/upload` 被 Swagger 的 `/api` 路径拦截 | 改为 `POST /upload` |
 | 房型为空 | `createHotel` service 未保存 rooms/facilities/images | DTO 和 service 均添加嵌套数据支持 |
+| App 首页推荐空白 | 酒店 status 为 pending，后端只返回 approved | 批量更新所有酒店 status 为 approved |
+| App 图片不显示 | 高德 POI 图片为外链 URL，被拼上本地服务器前缀 | `imgUrl()` 函数判断是否以 http 开头 |
+| App 地图空白闪屏 | `key={html}` 导致每次更新 POI 都重新挂载 WebView | 改用 `useRef` + `injectJavaScript` 更新标记 |
+| App 地图打不开 | WebView 加载 data URL 时阻止外部 CDN 资源 | 加 `baseUrl` + `mixedContentMode="always"` + `onLoad` |
 
 ---
 

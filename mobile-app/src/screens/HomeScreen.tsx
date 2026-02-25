@@ -169,17 +169,6 @@ export default function HomeScreen() {
         <TouchableOpacity style={styles.searchBtn} onPress={() => navigation.navigate('Search', { keyword })}>
           <Text style={styles.searchBtnText}>搜索酒店</Text>
         </TouchableOpacity>
-
-        <View style={styles.quickRow}>
-          <TouchableOpacity style={styles.quickBtn} onPress={() => navigation.navigate('Search', {})}>
-            <Text style={styles.quickIcon}>🗺️</Text>
-            <Text style={styles.quickLabel}>地图找房</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickBtn} onPress={() => navigation.navigate('Search', { starRating: 5 })}>
-            <Text style={styles.quickIcon}>🔍</Text>
-            <Text style={styles.quickLabel}>筛选酒店</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       <Text style={styles.sectionTitle}>为你推荐</Text>

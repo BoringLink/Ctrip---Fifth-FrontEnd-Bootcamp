@@ -1,4 +1,3 @@
-// lib/auth.ts
 import { User } from '../types';
 
 const TOKEN_KEY = 'token';

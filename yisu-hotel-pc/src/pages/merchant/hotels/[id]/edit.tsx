@@ -1,4 +1,3 @@
-// pages/merchant/hotels/[id]/edit.tsx
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Layout from '../../../../components/Layout';
@@ -30,12 +29,12 @@ export default function EditHotel() {
     }
   };
 
-  // 将酒店数据转换为表单初始值（返回 any 避免类型错误）
+  // 将酒店数据转换为表单初始值
   const getDefaultValues = (): any => {
     if (!hotel) return undefined;
     return {
       ...hotel,
-      openingDate: dayjs(hotel.openingDate), // 转换为 dayjs 对象供 DatePicker 使用
+      openingDate: dayjs(hotel.openingDate),
       rooms: hotel.rooms,
       promotions: hotel.promotions?.map(p => ({
         ...p,
@@ -103,7 +102,7 @@ export default function EditHotel() {
     }
   };
 
-  // 提交酒店基本信息（忽略图片相关参数）
+  // 提交酒店基本信息
   const onSubmit = async (
     data: CreateHotelDto,
     fileList?: any[],
@@ -112,7 +111,6 @@ export default function EditHotel() {
   ) => {
     setLoading(true);
     try {
-      // 转换日期为 ISO 字符串（data.openingDate 实际为 Dayjs 对象）
       const payload = {
         ...data,
         openingDate: (data.openingDate as any).toISOString(),
@@ -128,7 +126,6 @@ export default function EditHotel() {
           startDate: (p.startDate as any).toISOString(),
           endDate: (p.endDate as any).toISOString(),
         })),
-        // 新字段直接传递
         nearbyAttractions: data.nearbyAttractions,
         facilities: data.facilities,
         tagIds: data.tagIds,

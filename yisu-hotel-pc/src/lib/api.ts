@@ -36,7 +36,6 @@ export const updateHotelImage = (hotelId: string, imageId: string, data: { descr
 
 export const deleteHotelImage = (hotelId: string, imageId: string) =>
   api.delete(`/api/hotels/${hotelId}/images/${imageId}`).then(res => res.data);
-// lib/api.ts
 export const getImageUrl = (path: string) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;

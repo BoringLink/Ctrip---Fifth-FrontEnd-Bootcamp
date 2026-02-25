@@ -3,10 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { login } from '../lib/api';
 import { setToken, setUser } from '../lib/auth';
-import {
-  Form, Input, Button, Card, Typography,
-  Layout, Alert, Space
-} from 'antd';
+import { Form, Input, Button, Card, Typography, Layout, Alert, Space } from 'antd';
 import { UserOutlined, LockOutlined, FontColorsOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -39,7 +36,7 @@ export default function Login() {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+    <Layout style={{ minHeight: '100vh', background: '#fafafa' }}>
       <Content style={{
         display: 'flex',
         alignItems: 'center',
@@ -47,7 +44,7 @@ export default function Login() {
         padding: '50px 0'
       }}>
         <Card
-          style={{ width: 400, boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
+          style={{ width: 400, boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)' }}
           title={<Title level={2} style={{ textAlign: 'center' }} >易宿酒店管理系统</Title>}
         >
           <Title level={4} style={{ marginBottom: 24, textAlign: 'center' }}>登录</Title>
@@ -111,6 +108,7 @@ export default function Login() {
           </Space>
         </Card>
       </Content>
+
     </Layout>
   );
 }

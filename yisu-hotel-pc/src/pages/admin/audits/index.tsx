@@ -1,4 +1,3 @@
-// pages/admin/audits/index.tsx
 import { useEffect, useState } from 'react';
 import { Table, Button, Space, Tag, message, Popconfirm, Typography, Modal, Input } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from '@ant-design/icons';
@@ -80,7 +79,7 @@ export default function AdminAudits() {
   };
 
 
-  // 状态标签渲染（待审核页面只显示 pending，但保留其他状态以防万一）
+  // 状态标签渲染
   const renderStatus = (status: string) => {
     switch (status) {
       case 'pending':
@@ -161,7 +160,6 @@ export default function AdminAudits() {
               </Button>
             </>
           )}
-          {/* 可根据需要添加其他状态的操作，如重新审核等 */}
         </Space>
       ),
     },

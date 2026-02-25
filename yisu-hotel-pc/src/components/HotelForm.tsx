@@ -1,4 +1,3 @@
-// src/components/HotelForm.tsx
 import { useState, useEffect } from 'react';
 import { CreateHotelDto } from '../types';
 import { Form, Input, InputNumber, DatePicker, Button, Space, message, Upload, Card, Select, Radio } from 'antd';
@@ -25,7 +24,6 @@ interface HotelFormProps {
   onUploadImage?: (file: File, description: string, isMain: boolean) => Promise<void>;
 }
 
-// 纯 AntD Form 实现，无外层 form 标签
 export default function HotelForm({
   defaultValues,
   onSubmit,
@@ -35,7 +33,7 @@ export default function HotelForm({
   onDeleteImage,
   onUploadImage,
 }: HotelFormProps) {
-  const [form] = Form.useForm(); // 使用 AntD 自带的 Form 实例
+  const [form] = Form.useForm();
   const [newFiles, setNewFiles] = useState<any[]>([]);
   const [imageDescriptions, setImageDescriptions] = useState<{ [key: string]: string }>({});
   const [mainImageIndex, setMainImageIndex] = useState<number>(-1);
@@ -99,7 +97,6 @@ export default function HotelForm({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      // 传递四个参数：data, newFiles, imageDescriptions, mainImageIndex
       await onSubmit(values, newFiles, imageDescriptions, mainImageIndex);
     } catch (error) {
       message.error('表单填写有误');
@@ -107,12 +104,11 @@ export default function HotelForm({
   };
 
   return (
-    // 移除外层 <form> 标签，仅保留 AntD Form
     <Form
       form={form}
       layout="vertical"
       style={{ maxWidth: 800 }}
-      colon={false} // 移除标签后的冒号（可选）
+      colon={false}
     >
       {/* 酒店中文名 */}
       <Form.Item
@@ -518,12 +514,12 @@ export default function HotelForm({
         )}
       </Form.List>
 
-      {/* 提交按钮（绑定 AntD Form 的提交逻辑） */}
+      {/* 提交按钮 */}
       <Form.Item>
         <Space>
           <Button
             type="primary"
-            onClick={handleSubmit} // 直接绑定点击事件，而非 htmlType="submit"
+            onClick={handleSubmit}
             loading={loading}
             icon={<SaveOutlined />}
             size="large"

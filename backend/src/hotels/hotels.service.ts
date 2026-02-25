@@ -319,7 +319,6 @@ export class HotelsService {
     });
   }
 
-
   //追加
   async getAllHotelsForAdmin(query?: any): Promise<{ hotels: Hotel[]; total: number; page: number; limit: number }> {
     const where: any = {};
@@ -519,7 +518,7 @@ export class HotelsService {
     data: { description?: string; isMain?: boolean },
     userId: string,
   ) {
-    // 可选：检查酒店权限
+    // 检查酒店权限
     const hotel = await this.prisma.hotel.findUnique({ where: { id: hotelId } });
     if (!hotel) throw new NotFoundException('Hotel not found');
     if (hotel.merchantId !== userId) throw new ForbiddenException('Not authorized');
@@ -546,7 +545,7 @@ export class HotelsService {
     if (!hotel) throw new NotFoundException('Hotel not found');
     if (hotel.merchantId !== userId) throw new ForbiddenException('Not authorized');
 
-    // 可选：如果要删除的是主图，可以自动将另一张图设为主图（根据需求实现）
+    // 如果要删除的是主图，可以将另一张图设为主图
     return this.prisma.hotelImage.delete({
       where: { id: imageId },
     });

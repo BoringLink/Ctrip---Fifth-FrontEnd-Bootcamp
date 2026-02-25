@@ -5,7 +5,7 @@ import RequireAuth from '../../../components/RequireAuth';
 import { getMyHotels, deleteHotel } from '../../../lib/api';
 import { Hotel } from '../../../types';
 import { Table, Button, Tag, Space, Typography, message, Popconfirm } from 'antd';
-import type { ColumnsType } from 'antd/es/table'; // 导入 Table 列类型
+import type { ColumnsType } from 'antd/es/table';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -56,7 +56,6 @@ export default function MerchantHotels() {
     }
   };
 
-  // 核心修复：使用单独导入的 ColumnsType 类型
   const columns: ColumnsType<Hotel> = [
     {
       title: '酒店名称',
@@ -76,13 +75,11 @@ export default function MerchantHotels() {
     {
       title: '状态',
       key: 'status',
-      // 明确参数类型
       render: (_: React.ReactNode, record: Hotel) => getStatusTag(record.status),
     },
     {
       title: '操作',
       key: 'action',
-      // 明确参数类型
       render: (_: React.ReactNode, record: Hotel) => (
         <Space size="middle">
           <Link href={`/merchant/hotels/${record.id}/edit`}>

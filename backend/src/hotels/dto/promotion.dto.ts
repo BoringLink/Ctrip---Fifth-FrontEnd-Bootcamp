@@ -1,4 +1,3 @@
-// hotels/dto/promotion.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsEnum, IsNumber, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';

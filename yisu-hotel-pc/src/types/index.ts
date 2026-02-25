@@ -28,7 +28,6 @@ export interface Hotel {
   rooms?: Room[];
   promotions?: Promotion[];
   images?: HotelImage[];
-  // 可选字段
   facilities?: Facility[];
   nearbyAttractions?: NearbyAttraction[];
   tags?: { tag: Tag }[];
@@ -94,7 +93,6 @@ export interface CreateHotelDto {
   starRating: number;
   openingDate: Date;
   description?: string;
-  // 可选扩展字段，可额外补充
   nearbyAttractions?: string;
   rooms?: Room[];
   promotions?: Promotion[];
@@ -109,7 +107,7 @@ export interface LoginCredentials {
 
 export interface RegisterData extends LoginCredentials {
   name: string;
-  role?: UserRole; // 注册时由用户选择，但实际可能后端限制
+  role?: UserRole;
 }
 
 export interface HotelImage {

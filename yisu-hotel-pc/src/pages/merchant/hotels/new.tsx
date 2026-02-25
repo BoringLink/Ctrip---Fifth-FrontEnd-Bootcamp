@@ -11,7 +11,7 @@ export default function NewHotel() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // 提交函数（返回 Promise，适配 AntD Form）
+  // 提交函数
   const onSubmit = async (
     data: CreateHotelDto,
     fileList: any[],
@@ -35,14 +35,11 @@ export default function NewHotel() {
           startDate: (p.startDate as any).toISOString(),
           endDate: (p.endDate as any).toISOString(),
         })),
-        // 新字段直接传递（已为正确格式）
         nearbyAttractions: data.nearbyAttractions,
         facilities: data.facilities,
         tagIds: data.tagIds,
       };
-      // 转换 Date 为 ISO 字符串，供后端接收
       const hotel = await createHotel(data);
-      // 2. 上传图片
       const uploadPromises = fileList.map((file, index) => {
         const formData = new FormData();
         formData.append('file', file.originFileObj);
@@ -65,7 +62,6 @@ export default function NewHotel() {
       <Layout>
         <div className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-bold mb-4">新增酒店</h2>
-          {/* 直接传递 onSubmit，无需额外处理 */}
           <HotelForm onSubmit={onSubmit} loading={loading} />
         </div>
       </Layout>

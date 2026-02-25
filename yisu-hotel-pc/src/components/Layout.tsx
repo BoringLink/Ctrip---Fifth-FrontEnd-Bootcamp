@@ -81,19 +81,20 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '16px',
-          borderBottom: '1px solid #333'
+          padding: '20px 16px',
+          borderBottom: '1px solid #303030'
         }}>
-          <Title level={5} style={{ color: 'white', margin: 0 }}>
-            {collapsed ? '易宿' : '易宿酒店管理'}
-          </Title>
+          <Space align="center">
+            <img src="/易宿平台logo.png" alt="logo" width={32} height={32} />
+            {!collapsed && <Title level={4} style={{ color: '#fff', margin: 0 }}>易宿酒店管理</Title>}
+          </Space>
         </div>
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[router.pathname]}
           items={menuItems}
-          style={{ marginTop: 16 }}
+          style={{ borderRight: 'none' }}
         />
       </Sider>
       <Layout>

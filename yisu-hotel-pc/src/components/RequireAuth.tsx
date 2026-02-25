@@ -1,4 +1,3 @@
-// components/RequireAuth.tsx
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { isAuthenticated, hasRole } from '../lib/auth';
@@ -30,7 +29,7 @@ export default function RequireAuth({ children, allowedRoles }: Props) {
   }, [router, allowedRoles]);
 
   if (!authorized) {
-    return null; // 或者显示加载中组件
+    return null;
   }
 
   return <>{children}</>;

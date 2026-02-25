@@ -54,7 +54,7 @@ export interface Reservation {
 
 export type RootStackParamList = {
   Home: undefined
-  Search: { keyword?: string; tagId?: string }
+  Search: { keyword?: string; tagId?: string; starRating?: number }
   HotelDetail: { id: string }
   Booking: { hotelId: string; roomId: string; roomName: string; price: number }
   Confirm: { reservationId: string }

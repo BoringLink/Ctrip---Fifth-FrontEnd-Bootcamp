@@ -213,6 +213,26 @@ export class HotelsService {
     });
   }
 
+  async getAmapPoi(lat: number, lng: number): Promise<any[]> {
+    const url = `https://restapi.amap.com/v3/place/around?key=e8b4c90bcb5a403e4781b73d1aa90b1b&location=${lng},${lat}&keywords=酒店&radius=3000&offset=25&output=json`;
+    const res = await fetch(url);
+    const data = await res.json() as any;
+    return data.pois ?? [];
+  }
+
+  async getNearbyHotels(lat: number, lng: number, radiusKm = 10): Promise<any[]> {
+    const hotels = await this.prisma.hotel.findMany({
+      where: { status: HotelStatus.approved, latitude: { not: null }, longitude: { not: null } },
+      include: { rooms: { select: { price: true } }, images: true },
+    });
+    return hotels.filter(h => {
+      const dLat = (h.latitude! - lat) * Math.PI / 180;
+      const dLng = (h.longitude! - lng) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat*Math.PI/180)*Math.cos(h.latitude!*Math.PI/180)*Math.sin(dLng/2)**2;
+      return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) <= radiusKm;
+    });
+  }
+
   async getHotels(query: any): Promise<any> {
     // 构建查询条件
     const where: any = {

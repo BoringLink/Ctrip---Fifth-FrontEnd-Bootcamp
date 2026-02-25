@@ -99,6 +99,16 @@ export class HotelsController {
       },
     },
   })
+  @Get('nearby')
+  async getNearbyHotels(@Query('lat') lat: string, @Query('lng') lng: string, @Query('radius') radius?: string) {
+    return this.hotelsService.getNearbyHotels(parseFloat(lat), parseFloat(lng), radius ? parseFloat(radius) : 10);
+  }
+
+  @Get('poi')
+  async getPoiHotels(@Query('lat') lat: string, @Query('lng') lng: string) {
+    return this.hotelsService.getAmapPoi(parseFloat(lat), parseFloat(lng));
+  }
+
   @Get('verification')
   @UseGuards(AuthGuard)
   async getHotelsForVerification() {

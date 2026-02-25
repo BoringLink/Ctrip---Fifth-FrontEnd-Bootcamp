@@ -76,6 +76,8 @@ model Hotel {
   starRating      Int          @map("star_rating")
   openingDate     DateTime     @map("opening_date")
   description     String?
+  latitude        Float?
+  longitude       Float?
   status          HotelStatus
   rejectionReason String?      @map("rejection_reason")
   merchantId      String       @map("merchant_id")

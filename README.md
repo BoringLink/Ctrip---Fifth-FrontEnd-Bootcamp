@@ -310,20 +310,21 @@ PC管理端面向两类用户：商户和管理员，通过路由权限控制区
 
 #### Hotel（酒店表）
 
-| 字段名          | 数据类型    | 约束            | 描述                                      |
-| --------------- | ----------- | --------------- | ----------------------------------------- |
-| id              | String      | @id             | 酒店ID                                    |
-| nameZh          | String      | -               | 酒店中文名                                |
-| nameEn          | String      | -               | 酒店英文名                                |
-| address         | String      | -               | 酒店地址                                  |
-| starRating      | Int         | -               | 酒店星级                                  |
-| openingDate     | DateTime    | -               | 开业时间                                  |
-| description     | String      | ?               | 酒店描述                                  |
-| status          | HotelStatus | -               | 状态（pending/approved/rejected/offline） |
-| rejectionReason | String      | ?               | 拒绝原因                                  |
-| merchantId      | String      | -               | 商户ID                                    |
-| createdAt       | DateTime    | @default(now()) | 创建时间                                  |
-| updatedAt       | DateTime    | @updatedAt      | 更新时间                                  |
+| 字段名          | 数据类型              | 约束            | 描述                                      |
+| --------------- | --------------------- | --------------- | ----------------------------------------- |
+| id              | String                | @id             | 酒店ID                                    |
+| nameZh          | String                | -               | 酒店中文名                                |
+| nameEn          | String                | -               | 酒店英文名                                |
+| address         | String                | -               | 酒店地址                                  |
+| starRating      | Int                   | -               | 酒店星级                                  |
+| openingDate     | DateTime              | -               | 开业时间                                  |
+| description     | String                | ?               | 酒店描述                                  |
+| status          | HotelStatus           | -               | 状态（pending/approved/rejected/offline） |
+| rejectionReason | String                | ?               | 拒绝原因                                  |
+| merchantId      | String                | -               | 商户ID                                    |
+| location        | GEOMETRY(Point, 4326) | -               | 酒店地理位置（经纬度）                    |
+| createdAt       | DateTime              | @default(now()) | 创建时间                                  |
+| updatedAt       | DateTime              | @updatedAt      | 更新时间                                  |
 
 #### HotelRoom（酒店房型表）
 

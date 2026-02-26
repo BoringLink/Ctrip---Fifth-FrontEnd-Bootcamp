@@ -9,10 +9,6 @@ import SearchScreen from './screens/SearchScreen'
 import HotelDetailScreen from './screens/HotelDetailScreen'
 import BookingScreen from './screens/BookingScreen'
 import ConfirmScreen from './screens/ConfirmScreen'
-import LoginScreen from './screens/LoginScreen'
-import RegisterScreen from './screens/RegisterScreen'
-import ProfileScreen from './screens/ProfileScreen'
-import { AuthProvider } from './context/AuthContext'
 import type { RootStackParamList } from './types'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -53,33 +49,20 @@ function HomeTabs() {
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>🗺️</Text>,
         }}
       />
-      <Tab.Screen
-        name="ProfileTab"
-        component={ProfileScreen}
-        options={{
-          title: '我的',
-          tabBarLabel: '我的',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 20, color }}>👤</Text>,
-        }}
-      />
     </Tab.Navigator>
   )
 }
 
 export default function Navigation() {
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={stackOptions}>
-          <Stack.Screen name="Home" component={HomeTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Register" component={RegisterScreen} options={{ title: '注册账号' }} />
-          <Stack.Screen name="Search" component={SearchScreen} options={{ title: '搜索酒店' }} />
-          <Stack.Screen name="HotelDetail" component={HotelDetailScreen} options={{ title: '酒店详情' }} />
-          <Stack.Screen name="Booking" component={BookingScreen} options={{ title: '填写预订信息' }} />
-          <Stack.Screen name="Confirm" component={ConfirmScreen} options={{ title: '预订确认' }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AuthProvider>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={stackOptions}>
+        <Stack.Screen name="Home" component={HomeTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="Search" component={SearchScreen} options={{ title: '搜索酒店' }} />
+        <Stack.Screen name="HotelDetail" component={HotelDetailScreen} options={{ title: '酒店详情' }} />
+        <Stack.Screen name="Booking" component={BookingScreen} options={{ title: '填写预订信息' }} />
+        <Stack.Screen name="Confirm" component={ConfirmScreen} options={{ title: '预订确认' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   )
 }
